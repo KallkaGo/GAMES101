@@ -6,6 +6,21 @@
 
 constexpr double MY_PI = 3.1415926;
 
+Eigen::Matrix4f get_rotation(Vector3f axis, float angle) {
+    Eigen::Matrix4f rotation = Eigen::Matrix4f::Identity();
+    Eigen::Matrix3f normalMat3f = Eigen::Matrix3f::Identity(), R, tmpMat;
+    angle = angle * MY_PI / 180.0f;
+    tmpMat << 0, -axis[2], axis[1],
+        axis[2], 0, -axis[0],
+        -axis[1], axis[0], 0;
+
+    R = std::cos(angle) * normalMat3f + (1 - std::cos(angle)) * axis * axis.transpose()
+        + std::sin(angle) * tmpMat;
+    rotation.block(0, 0, 3, 3) = R;
+    std::cout << rotation << std::endl;
+    return rotation;
+}
+
 Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
@@ -57,6 +72,10 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     projection = projectionMatrix * projection;
     return projection;
 }
+
+
+
+
 
 int main(int argc, const char** argv)
 {
